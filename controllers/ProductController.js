@@ -14,9 +14,30 @@ class ProductController {
 
   static async show(req, res) {
     try {
+      console.log(req.body, "a");
       const data = await new Product().first(req.params.id);
 
       successResponse(res, data);
+    } catch (exception) {
+      failedResponse(res, exception);
+    }
+  }
+
+  static async store(req, res) {
+    try {
+      await new Product().store(req.body);
+
+      successResponse(res, {}, "Successfully stored product");
+    } catch (exception) {
+      failedResponse(res, exception);
+    }
+  }
+
+  static async update(req, res) {
+    try {
+      await new Product().update(req.params.id, req.body);
+
+      successResponse(res, {}, "Successfully updated product");
     } catch (exception) {
       failedResponse(res, exception);
     }

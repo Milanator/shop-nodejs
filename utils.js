@@ -6,10 +6,9 @@ export const successResponse = (res, data = {}, message = undefined) => {
   });
 };
 
-export const failedResponse = (res, message = undefined, status = 500) => {
-  return res.status(200).json({
-    message,
-    status,
+export const failedResponse = (res, exception = undefined, status = 500) => {
+  return res.status(status).json({
+    message: exception.message,
     error: 1,
   });
 };

@@ -6,13 +6,15 @@ import productRoutes from "./routes/product.js";
 
 const app = express();
 
+// plugin
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
 app.use(cors());
 
 // routes
-app.use("/api/v1", productRoutes);
-
-// plugin
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/api/v1/product", productRoutes);
 
 const port = 4000;
 

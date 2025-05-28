@@ -16,6 +16,15 @@ class Product {
     return !isEmpty(row) ? row[0] : undefined;
   }
 
+  // store product
+  async store(data) {
+    await db.execute(
+      "INSERT INTO products SET title = ?, price = ?, image_url = ?",
+      [data.title, data.price, data.image_url]
+    );
+  }
+
+  // delete product
   async delete(id) {
     await db.execute("DELETE FROM products WHERE id = ?", [id]);
   }
