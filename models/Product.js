@@ -24,6 +24,14 @@ class Product {
     );
   }
 
+  // update product
+  async update(data, id) {
+    await db.execute(
+      "UPDATE products SET title = ?, price = ?, image_url = ? WHERE id = ?",
+      [data.title, data.price, data.image_url, id]
+    );
+  }
+
   // delete product
   async delete(id) {
     await db.execute("DELETE FROM products WHERE id = ?", [id]);

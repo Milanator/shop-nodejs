@@ -35,7 +35,7 @@ class ProductController {
 
   static async update(req, res) {
     try {
-      await new Product().update(req.params.id, req.body);
+      await new Product().update(req.body, req.params.id);
 
       successResponse(res, {}, "Successfully updated product");
     } catch (exception) {
