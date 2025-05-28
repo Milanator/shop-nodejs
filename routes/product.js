@@ -3,7 +3,7 @@ import ProductController from "./../controllers/ProductController.js";
 
 const routes = express.Router();
 
-// index
 routes.get("/product", ProductController.index);
+routes.get("/product/:id", ProductController.show);
 
 export default routes;

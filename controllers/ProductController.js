@@ -1,10 +1,25 @@
 import Product from "./../models/Product.js";
+import { successResponse, failedResponse } from "./../utils.js";
 
 class ProductController {
   static async index(req, res) {
-    const data = await new Product().get();
+    try {
+      const data = await new Product().get();
 
-    res.status(200).json(data);
+      successResponse(res, data);
+    } catch (exception) {
+      failedResponse(res, exception);
+    }
+  }
+
+  static async show(req, res) {
+    try {
+      const data = await new Product().first(req.params.id);
+
+      successResponse(res, data);
+    } catch (exception) {
+      failedResponse(res, exception);
+    }
   }
 }
 
