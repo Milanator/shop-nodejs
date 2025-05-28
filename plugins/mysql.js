@@ -1,11 +1,5 @@
-const mysql = require("mysql2");
+import mysql from "mysql2/promise";
 
-const connection = mysql.createConnection(
+export default await mysql.createConnection(
   "mysql://root:@localhost:3306/shop-nodejs"
 );
-
-connection.addListener("error", (err) => {
-  console.log(err);
-});
-
-module.exports = connection;

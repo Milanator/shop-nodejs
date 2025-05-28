@@ -1,10 +1,16 @@
-const db = require("./../plugins/mysql");
+import db from "./../plugins/mysql.js";
 
 class Product {
-  async save(rData) {
+  async get() {
+    const [rows] = await db.execute("SELECT * FROM products");
+
+    return rows;
+  }
+
+  save(rData) {
     const data = [rData.title, rData.price];
 
-    db.execute(
+    return db.execute(
       "INSERT INTO products SET title = ?, price = ?",
       data,
       (err, result, fields) => {
@@ -19,4 +25,4 @@ class Product {
   }
 }
 
-module.exports = Product;
+export default Product;

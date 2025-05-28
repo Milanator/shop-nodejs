@@ -1,15 +1,14 @@
-const express = require("express");
-const Product = require("../models/Product");
+import express from "express";
+import Product from "./../models/Product.js";
 
 const routes = express.Router();
 
 // index
-routes.get("/product", (req, res) => {
+routes.get("/product", async (req, res) => {
   const product = new Product();
+  const data = await product.get();
 
-  product.save({ title: "Test", price: "10.2" });
-
-  res.status(200).json({ message: "Ok" });
+  res.status(200).json(data);
 });
 
-module.exports = routes;
+export default routes;
