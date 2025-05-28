@@ -21,6 +21,16 @@ class ProductController {
       failedResponse(res, exception);
     }
   }
+
+  static async destroy(req, res) {
+    try {
+      await new Product().delete(req.params.id);
+
+      successResponse(res, {}, "Successfully deleted product");
+    } catch (exception) {
+      failedResponse(res, exception);
+    }
+  }
 }
 
 export default ProductController;

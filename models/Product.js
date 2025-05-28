@@ -16,21 +16,8 @@ class Product {
     return !isEmpty(row) ? row[0] : undefined;
   }
 
-  save(rData) {
-    const data = [rData.title, rData.price];
-
-    return db.execute(
-      "INSERT INTO products SET title = ?, price = ?",
-      data,
-      (err, result, fields) => {
-        if (err instanceof Error) {
-          console.log(err);
-          return;
-        }
-
-        return result;
-      }
-    );
+  async delete(id) {
+    await db.execute("DELETE FROM products WHERE id = ?", [id]);
   }
 }
 

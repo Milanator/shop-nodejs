@@ -5,5 +5,6 @@ const routes = express.Router();
 
 routes.get("/product", ProductController.index);
 routes.get("/product/:id", ProductController.show);
+routes.delete("/product/:id", ProductController.destroy);
 
 export default routes;

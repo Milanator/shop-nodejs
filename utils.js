@@ -1,6 +1,7 @@
-export const successResponse = (res, data = {}) => {
+export const successResponse = (res, data = {}, message = undefined) => {
   return res.status(200).json({
     data,
+    message,
     error: 0,
   });
 };
