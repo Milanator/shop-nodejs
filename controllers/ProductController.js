@@ -1,10 +1,12 @@
-import Product from "./../models/Product.js";
+import Model from "./../models/Product.js";
+import Transformer from "./../transformers/Product.js";
 import { successResponse, failedResponse } from "./../utils.js";
 
 class ProductController {
   static async index(req, res) {
     try {
-      const data = await new Product().get();
+      let data = await new Model().get();
+      data = new Transformer().get(data);
 
       successResponse(res, data);
     } catch (exception) {
@@ -14,8 +16,8 @@ class ProductController {
 
   static async show(req, res) {
     try {
-      console.log(req.body, "a");
-      const data = await new Product().first(req.params.id);
+      let data = await new Model().first(req.params.id);
+      data = new Transformer().first(data);
 
       successResponse(res, data);
     } catch (exception) {
@@ -25,7 +27,7 @@ class ProductController {
 
   static async store(req, res) {
     try {
-      await new Product().store(req.body);
+      await new Model().store(req.body);
 
       successResponse(res, {}, "Successfully stored product");
     } catch (exception) {
@@ -35,7 +37,7 @@ class ProductController {
 
   static async update(req, res) {
     try {
-      await new Product().update(req.body, req.params.id);
+      await new Model().update(req.body, req.params.id);
 
       successResponse(res, {}, "Successfully updated product");
     } catch (exception) {
@@ -45,7 +47,7 @@ class ProductController {
 
   static async destroy(req, res) {
     try {
-      await new Product().delete(req.params.id);
+      await new Model().delete(req.params.id);
 
       successResponse(res, {}, "Successfully deleted product");
     } catch (exception) {

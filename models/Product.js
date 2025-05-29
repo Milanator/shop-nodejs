@@ -11,16 +11,18 @@ class Product {
 
   // find single product
   async first(id) {
-    const [row] = await db.execute("SELECT * FROM products WHERE id = ?", [id]);
+    const [rows] = await db.execute("SELECT * FROM products WHERE id = ?", [
+      id,
+    ]);
 
-    return !isEmpty(row) ? row[0] : undefined;
+    return rows;
   }
 
   // store product
   async store(data) {
     await db.execute(
-      "INSERT INTO products SET title = ?, price = ?, image_url = ?",
-      [data.title, data.price, data.image_url]
+      "INSERT INTO products SET title = ?, price = ?, image_url = ?, description = ?",
+      [data.title, data.price, data.image_url, data.description]
     );
   }
 
