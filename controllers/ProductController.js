@@ -5,8 +5,8 @@ import { successResponse, failedResponse } from "./../utils.js";
 class ProductController {
   static async index(req, res) {
     try {
-      let data = await new Model().get();
-      data = new Transformer().get(data);
+      let data = await Model.findAll();
+      data = Transformer.get(data);
 
       successResponse(res, data);
     } catch (exception) {
@@ -16,8 +16,9 @@ class ProductController {
 
   static async show(req, res) {
     try {
-      let data = await new Model().first(req.params.id);
-      data = new Transformer().first(data);
+      let data = await Model.findOne({ where: { id: req.params.id } });
+
+      data = Transformer.first(data);
 
       successResponse(res, data);
     } catch (exception) {
@@ -27,7 +28,9 @@ class ProductController {
 
   static async store(req, res) {
     try {
-      await new Model().store(req.body);
+      await Model.create(req.body, {
+        fields: ["title", "image_url", "description", "price"],
+      });
 
       successResponse(res, {}, "Successfully stored product");
     } catch (exception) {
@@ -37,7 +40,21 @@ class ProductController {
 
   static async update(req, res) {
     try {
-      await new Model().update(req.body, req.params.id);
+      const { title, image_url, description, price } = req.body;
+
+      await Model.update(
+        {
+          title,
+          image_url,
+          description,
+          price,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
 
       successResponse(res, {}, "Successfully updated product");
     } catch (exception) {
@@ -47,7 +64,11 @@ class ProductController {
 
   static async destroy(req, res) {
     try {
-      await new Model().delete(req.params.id);
+      await Model.destroy({
+        where: {
+          id: req.params.id,
+        },
+      });
 
       successResponse(res, {}, "Successfully deleted product");
     } catch (exception) {

@@ -1,19 +1,19 @@
 import { isEmpty } from "../utils.js";
 
 class ProductTransformer {
-  format(item) {
+  static format(item) {
     return {
       ...item,
       price: Number(item.price).toFixed(2),
     };
   }
 
-  get(data) {
-    return data.map((item) => this.format(item));
+  static get(data) {
+    return data.map((item) => this.format(item.dataValues));
   }
 
-  first(rows) {
-    return !isEmpty(rows) ? this.format(rows[0]) : undefined;
+  static first(row) {
+    return !isEmpty(row?.dataValues) ? this.format(row.dataValues) : undefined;
   }
 }
 
