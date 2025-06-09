@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 
+import database from "./plugins/database.js";
+
 import productRoutes from "./routes/product.js";
 
 const app = express();
@@ -18,6 +20,13 @@ app.use("/api/v1/product", productRoutes);
 
 const port = 4000;
 
-app.listen(port);
+database
+  .sync()
+  .then(() => {
+    app.listen(port);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 export default app;

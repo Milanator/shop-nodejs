@@ -1,43 +1,23 @@
-import { isEmpty } from "./../utils.js";
-import db from "./../plugins/mysql.js";
+import Sequelize from "sequelize";
+import database from "./../plugins/database.js";
 
-class Product {
-  // get all products
-  async get() {
-    const [rows] = await db.execute("SELECT * FROM products");
-
-    return rows;
-  }
-
-  // find single product
-  async first(id) {
-    const [rows] = await db.execute("SELECT * FROM products WHERE id = ?", [
-      id,
-    ]);
-
-    return rows;
-  }
-
-  // store product
-  async store(data) {
-    await db.execute(
-      "INSERT INTO products SET title = ?, price = ?, image_url = ?, description = ?",
-      [data.title, data.price, data.image_url, data.description]
-    );
-  }
-
-  // update product
-  async update(data, id) {
-    await db.execute(
-      "UPDATE products SET title = ?, price = ?, image_url = ?, description = ? WHERE id = ?",
-      [data.title, data.price, data.image_url, data.description, id]
-    );
-  }
-
-  // delete product
-  async delete(id) {
-    await db.execute("DELETE FROM products WHERE id = ?", [id]);
-  }
-}
-
-export default Product;
+export default database.define("product", {
+  id: {
+    type: Sequelize.INTEGER,
+    autoincrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  title: Sequelize.STRING,
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false,
+  },
+  image_url: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+  },
+});
