@@ -29,8 +29,8 @@ class Product {
   // update product
   async update(data, id) {
     await db.execute(
-      "UPDATE products SET title = ?, price = ?, image_url = ? WHERE id = ?",
-      [data.title, data.price, data.image_url, id]
+      "UPDATE products SET title = ?, price = ?, image_url = ?, description = ? WHERE id = ?",
+      [data.title, data.price, data.image_url, data.description, id]
     );
   }
 
