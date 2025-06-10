@@ -48,8 +48,8 @@ Product.belongsToMany(Cart, { through: CartItem });
 
 // setup project
 database
-  .sync({ force: true }) // refresh database
-  // .sync()
+  // .sync({ force: true }) // refresh database
+  .sync()
   .then(() => User.findOne({ where: { id: 1 } }))
   .then((user) => {
     return user
@@ -57,9 +57,24 @@ database
       : User.create({ name: "Milan", email: "navratil.milann@gmail.com" });
   })
   .then((user) => {
-    return user.createCart();
+    user.createCart();
+
+    return user;
   })
-  .then((cart) => {
+  .then((user) =>
+    user.getProducts().then((products) => {
+      if (!products.length) {
+        // no products
+        user.createProduct({
+          title: "Test",
+          price: 10,
+          imageUrl:
+            "https://media.istockphoto.com/id/495477978/photo/open-book.jpg?s=612x612&w=0&k=20&c=vwJ6__M7CVPdjkQFUv9j2pr7QJiQ9bWW_5jXjR9TcjY=",
+        });
+      }
+    })
+  )
+  .then(() => {
     app.listen(port);
   })
   .catch((error) => {
