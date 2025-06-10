@@ -4,11 +4,12 @@ import { ObjectId } from "mongodb";
 const COLLECTION = "products";
 
 export default class Product {
-  constructor(title, price, description, imageUrl, id = undefined) {
+  constructor(title, price, description, imageUrl, userId, id = undefined) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
+    this.userId = userId;
     this.id = id;
   }
 

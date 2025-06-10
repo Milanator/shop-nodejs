@@ -19,7 +19,13 @@ class productController {
   static async store(req, res) {
     const { title, price, imageUrl, description } = req.body;
 
-    const product = new Product(title, price, description, imageUrl);
+    const product = new Product(
+      title,
+      price,
+      description,
+      imageUrl,
+      req.user._id
+    );
 
     product
       .store()
@@ -37,6 +43,7 @@ class productController {
       price,
       description,
       imageUrl,
+      req.user._id,
       req.params.id
     );
 

@@ -1,13 +1,23 @@
-import Sequelize from "sequelize";
-import database from "../plugins/database.js";
+import { getDb } from "./../plugins/database.js";
+import { ObjectId } from "mongodb";
 
-export default database.define("user", {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
-  },
-  name: Sequelize.STRING,
-  email: Sequelize.STRING,
-});
+const COLLECTION = "users";
+
+export default class User {
+  constructor(name, email) {
+    this.name = name;
+    this.email = name;
+  }
+
+  static #whereId(id) {
+    return { _id: new ObjectId(id) };
+  }
+
+  save() {
+    return getDb().collection(COLLECTION).insertOne(this);
+  }
+
+  static findById(id) {
+    return getDb().collection(COLLECTION).findOne(User.#whereId(id));
+  }
+}
