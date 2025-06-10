@@ -1,8 +1,17 @@
 import { successResponse, failedResponse } from "../utils.js";
+import Transformer from "../transformers/order.js";
 
 class orderController {
+  static async index(req, res) {
+    req.user
+      .getOrders({ include: "products" })
+      .then((orders) => Transformer.get(orders))
+      .then((orders) => successResponse(res, orders))
+      .catch((exception) => failedResponse(res, exception));
+  }
+
   // store cart products to order + clear cart products
-  static async show(req, res) {
+  static async store(req, res) {
     let cart = undefined;
 
     req.user
