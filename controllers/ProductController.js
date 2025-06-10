@@ -1,34 +1,23 @@
 import Product from "../models/product.js";
-import Transformer from "./../transformers/product.js";
 import { successResponse, failedResponse } from "../utils.js";
 
 class productController {
-  // static async index(req, res) {
-  //   try {
-  //     const data = await Product.findAll();
+  static async index(req, res) {
+    Product.fetchAll()
+      .then((products) => successResponse(res, products))
+      .catch((exception) =>
+        failedResponse(res, exception, "Fail storing product")
+      );
+  }
 
-  //     successResponse(res, Transformer.get(data));
-  //   } catch (exception) {
-  //     failedResponse(res, exception);
-  //   }
-  // }
-
-  // static async show(req, res) {
-  //   req.user
-  //     .getProducts({ where: { id: req.params.id } })
-  //     .then((products) => {
-  //       const product = products[0];
-
-  //       if (!product) {
-  //         successResponse(res, {});
-  //       }
-
-  //       successResponse(res, Transformer.first(product));
-  //     })
-  //     .catch((exception) => {
-  //       failedResponse(res, exception);
-  //     });
-  // }
+  static async show(req, res) {
+    Product.findById(req.params.id)
+      .then((product) => {
+        console.log(product);
+        return successResponse(res, product);
+      })
+      .catch((exception) => failedResponse(res, exception));
+  }
 
   static async store(req, res) {
     const { title, price, imageUrl, description } = req.body;
@@ -36,12 +25,10 @@ class productController {
 
     product
       .save()
-      .then(() => {
-        successResponse(res, {}, "Success storing product");
-      })
-      .catch((exception) => {
-        successResponse(res, exception, "Fail storing product");
-      });
+      .then(() => successResponse(res, {}, "Success storing product"))
+      .catch((exception) =>
+        failedResponse(res, exception, "Fail storing product")
+      );
   }
 
   // static async update(req, res) {
