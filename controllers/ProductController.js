@@ -12,62 +12,47 @@ class productController {
 
   static async show(req, res) {
     Product.findById(req.params.id)
-      .then((product) => {
-        console.log(product);
-        return successResponse(res, product);
-      })
+      .then((product) => successResponse(res, product))
       .catch((exception) => failedResponse(res, exception));
   }
 
   static async store(req, res) {
     const { title, price, imageUrl, description } = req.body;
+
     const product = new Product(title, price, description, imageUrl);
 
     product
-      .save()
+      .store()
       .then(() => successResponse(res, {}, "Success storing product"))
       .catch((exception) =>
         failedResponse(res, exception, "Fail storing product")
       );
   }
 
-  // static async update(req, res) {
-  //   try {
-  //     const { title, imageUrl, description, price } = req.body;
+  static async update(req, res) {
+    const { title, imageUrl, description, price } = req.body;
 
-  //     await Product.update(
-  //       {
-  //         title,
-  //         imageUrl,
-  //         description,
-  //         price,
-  //       },
-  //       {
-  //         where: {
-  //           id: req.params.id,
-  //         },
-  //       }
-  //     );
+    const product = new Product(
+      title,
+      price,
+      description,
+      imageUrl,
+      req.params.id
+    );
 
-  //     successResponse(res, {}, "Successfully updated product");
-  //   } catch (exception) {
-  //     failedResponse(res, exception);
-  //   }
-  // }
+    product
+      .update()
+      .then((result) =>
+        successResponse(res, {}, "Successfully updated product")
+      )
+      .catch((exception) => failedResponse(res, exception));
+  }
 
-  // static async destroy(req, res) {
-  //   try {
-  //     await Product.destroy({
-  //       where: {
-  //         id: req.params.id,
-  //       },
-  //     });
-
-  //     successResponse(res, {}, "Successfully deleted product");
-  //   } catch (exception) {
-  //     failedResponse(res, exception);
-  //   }
-  // }
+  static async destroy(req, res) {
+    Product.destroy(req.params.id)
+      .then(() => successResponse(res, {}, "Successfully deleted product"))
+      .catch((exception) => failedResponse(res, exception));
+  }
 }
 
 export default productController;
