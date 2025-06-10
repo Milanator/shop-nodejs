@@ -1,5 +1,5 @@
 import Sequelize from "sequelize";
-import database from "./../plugins/database.js";
+import database from "../plugins/database.js";
 
 export default database.define("cartItem", {
   id: {

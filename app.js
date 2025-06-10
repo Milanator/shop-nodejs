@@ -6,14 +6,17 @@ import cors from "cors";
 import database from "./plugins/database.js";
 
 // models
-import User from "./models/User.js";
-import Product from "./models/Product.js";
-import Cart from "./models/Cart.js";
-import CartItem from "./models/CartItem.js";
+import User from "./models/user.js";
+import Product from "./models/product.js";
+import Cart from "./models/cart.js";
+import CartItem from "./models/cartItem.js";
+import Order from "./models/order.js";
+import OrderItem from "./models/orderItem.js";
 
 // routes
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
+import orderRoutes from "./routes/order.js";
 
 const app = express();
 
@@ -35,16 +38,23 @@ app.use((req, res, next) => {
 // routes
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
+app.use("/api/v1/order", orderRoutes);
 
 const port = 4000;
 
 // relations
-Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product);
 User.hasOne(Cart);
+User.hasMany(Order);
+
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
+
+Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 Product.belongsToMany(Cart, { through: CartItem });
+
+Order.belongsTo(User);
+Order.belongsToMany(Product, { through: OrderItem });
 
 // setup project
 database

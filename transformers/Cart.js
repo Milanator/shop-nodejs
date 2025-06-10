@@ -1,4 +1,4 @@
-class ProductTransformer {
+class CartTransformer {
   static format(item) {
     const data = {
       quantity: item.cartItem.quantity,
@@ -18,4 +18,4 @@ class ProductTransformer {
   }
 }
 
-export default ProductTransformer;
+export default CartTransformer;
