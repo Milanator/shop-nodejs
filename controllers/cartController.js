@@ -54,6 +54,15 @@ class cartController {
       .then((product) => successResponse(res, product))
       .catch((exception) => failedResponse(res, exception));
   }
+
+  static async destroy(req, res) {
+    req.user
+      .getCart()
+      .then((cart) => cart.getProducts({ where: { id: req.params.product } }))
+      .then((products) => products[0].cartItem.destroy())
+      .then(() => successResponse(res, {}))
+      .catch((exception) => failedResponse(res, exception));
+  }
 }
 
 export default cartController;
