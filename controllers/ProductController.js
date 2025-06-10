@@ -1,51 +1,56 @@
-import Model from "./../models/Product.js";
-import Transformer from "./../transformers/Product.js";
-import { successResponse, failedResponse } from "./../utils.js";
+import Product from "../models/Product.js";
+import Transformer from "../transformers/Product.js";
+import { successResponse, failedResponse } from "../utils.js";
 
-class ProductController {
+class productController {
   static async index(req, res) {
     try {
-      let data = await Model.findAll();
-      data = Transformer.get(data);
+      const data = await Product.findAll();
 
-      successResponse(res, data);
+      successResponse(res, Transformer.get(data));
     } catch (exception) {
       failedResponse(res, exception);
     }
   }
 
   static async show(req, res) {
-    try {
-      let data = await Model.findOne({ where: { id: req.params.id } });
+    req.user
+      .getProducts({ where: { id: req.params.id } })
+      .then((products) => {
+        const product = products[0];
 
-      data = Transformer.first(data);
+        if (!product) {
+          successResponse(res, {});
+        }
 
-      successResponse(res, data);
-    } catch (exception) {
-      failedResponse(res, exception);
-    }
+        successResponse(res, Transformer.first(product));
+      })
+      .catch((exception) => {
+        failedResponse(res, exception);
+      });
   }
 
   static async store(req, res) {
-    try {
-      await Model.create(req.body, {
-        fields: ["title", "image_url", "description", "price"],
+    req.user
+      .createProduct(req.body, {
+        fields: ["title", "imageUrl", "description", "price", "userId"],
+      })
+      .then(() => {
+        successResponse(res, {}, "Successfully stored product");
+      })
+      .catch((exception) => {
+        successResponse(res, exception, "Successfully stored product");
       });
-
-      successResponse(res, {}, "Successfully stored product");
-    } catch (exception) {
-      failedResponse(res, exception);
-    }
   }
 
   static async update(req, res) {
     try {
-      const { title, image_url, description, price } = req.body;
+      const { title, imageUrl, description, price } = req.body;
 
-      await Model.update(
+      await Product.update(
         {
           title,
-          image_url,
+          imageUrl,
           description,
           price,
         },
@@ -64,7 +69,7 @@ class ProductController {
 
   static async destroy(req, res) {
     try {
-      await Model.destroy({
+      await Product.destroy({
         where: {
           id: req.params.id,
         },
@@ -77,4 +82,4 @@ class ProductController {
   }
 }
 
-export default ProductController;
+export default productController;

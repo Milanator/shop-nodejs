@@ -13,9 +13,9 @@ export default database.define("product", {
     type: Sequelize.DOUBLE,
     allowNull: false,
   },
-  image_url: {
+  imageUrl: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   description: {
     type: Sequelize.STRING,

@@ -20,16 +20,16 @@ class Product {
   // store product
   async store(data) {
     await db.execute(
-      "INSERT INTO products SET title = ?, price = ?, image_url = ?, description = ?",
-      [data.title, data.price, data.image_url, data.description]
+      "INSERT INTO products SET title = ?, price = ?, imageUrl = ?, description = ?",
+      [data.title, data.price, data.imageUrl, data.description]
     );
   }
 
   // update product
   async update(data, id) {
     await db.execute(
-      "UPDATE products SET title = ?, price = ?, image_url = ?, description = ? WHERE id = ?",
-      [data.title, data.price, data.image_url, data.description, id]
+      "UPDATE products SET title = ?, price = ?, imageUrl = ?, description = ? WHERE id = ?",
+      [data.title, data.price, data.imageUrl, data.description, id]
     );
   }
 
