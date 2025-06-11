@@ -3,8 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-import { mongoConnect } from "./plugins/database.js";
-
 // models
 import User from "./models/User.js";
 
@@ -12,6 +10,7 @@ import User from "./models/User.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
+import mongoose from "mongoose";
 
 const app = express();
 
@@ -36,15 +35,18 @@ app.use((req, res, next) => {
 
 // routes
 app.use("/api/v1/product", productRoutes);
-app.use("/api/v1/cart", cartRoutes);
-app.use("/api/v1/order", orderRoutes);
+// app.use("/api/v1/cart", cartRoutes);
+// app.use("/api/v1/order", orderRoutes);
 
 const port = 4000;
 
-// relations
-
-mongoConnect(() => {
-  app.listen(port);
-});
+mongoose
+  .connect(
+    "mongodb+srv://navratilmilann:XwuSFq3KLQgRjQvs@nodejs-course.t5lqqq6.mongodb.net/?retryWrites=true&w=majority&appName=NodeJS-course"
+  )
+  .then((result) => {
+    app.listen(port);
+  })
+  .catch((exception) => console.log(exception));
 
 export default app;
