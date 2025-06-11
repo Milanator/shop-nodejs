@@ -15,13 +15,17 @@ export default class User {
     return { _id: new ObjectId(id) };
   }
 
+  compareProduct(cartItem, product) {
+    return cartItem.productId.toString() === product._id.toString();
+  }
+
   save() {
     return getDb().collection(COLLECTION).insertOne(this);
   }
 
   addToCart(product) {
-    const index = this.cart.items.findIndex(
-      (ci) => ci.productId.toString() === product._id.toString()
+    const index = this.cart.items.findIndex((i) =>
+      this.compareProduct(i, product)
     );
 
     if (index > -1) {
@@ -40,8 +44,18 @@ export default class User {
       .updateOne(User.#whereId(this.id), { $set: { cart: this.cart } });
   }
 
+  deleteFromCart(product) {
+    this.cart.items = this.cart.items.filter(
+      (i) => !this.compareProduct(i, product)
+    );
+
+    return getDb()
+      .collection(COLLECTION)
+      .updateOne(User.#whereId(this.id), { $set: { cart: this.cart } });
+  }
+
   getCart() {
-    const productIds = this.cart.items.map((ci) => ci.productId);
+    const productIds = this.cart.items.map((i) => i.productId);
 
     return getDb()
       .collection("products")
@@ -50,9 +64,8 @@ export default class User {
       .then((products) =>
         products.map((p) => ({
           product: p,
-          quantity: this.cart.items.find(
-            (ci) => ci.productId.toString() === p._id.toString()
-          ).quantity,
+          quantity: this.cart.items.find((i) => this.compareProduct(i, p))
+            .quantity,
         }))
       )
       .then((products) => ({

@@ -16,6 +16,13 @@ class cartController {
       .then((result) => successResponse(res, {}))
       .catch((exception) => failedResponse(res, exception));
   }
+
+  static destroy(req, res) {
+    Product.findById(req.params.product)
+      .then((product) => req.user.deleteFromCart(product))
+      .then((result) => successResponse(res, {}))
+      .catch((exception) => failedResponse(res, exception));
+  }
 }
 
 export default cartController;
