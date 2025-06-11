@@ -32,17 +32,15 @@ class productController {
   static async update(req, res) {
     const { title, imageUrl, description, price } = req.body;
 
-    const product = new Product(
-      title,
-      price,
-      description,
-      imageUrl,
-      req.user._id,
-      req.params.id
-    );
+    Product.findById(req.params.id)
+      .then((product) => {
+        product.title = title;
+        product.imageUrl = imageUrl;
+        product.description = description;
+        product.price = price;
 
-    product
-      .update()
+        return product.save();
+      })
       .then((result) =>
         successResponse(res, {}, "Successfully updated product")
       )
@@ -50,7 +48,7 @@ class productController {
   }
 
   static async destroy(req, res) {
-    Product.destroy(req.params.id)
+    Product.findByIdAndDelete(req.params.id)
       .then(() => successResponse(res, {}, "Successfully deleted product"))
       .catch((exception) => failedResponse(res, exception));
   }
