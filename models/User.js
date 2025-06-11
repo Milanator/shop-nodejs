@@ -40,4 +40,12 @@ schema.methods.addToCart = function (product) {
   return this.save();
 };
 
+schema.methods.deleteFromCart = function (product) {
+  this.cart.items = this.cart.items.filter(
+    (i) => i.productId.toString() !== product._id.toString()
+  );
+
+  return this.save();
+};
+
 export default mongoose.model("User", schema);

@@ -4,8 +4,8 @@ import { successResponse, failedResponse } from "../utils.js";
 class cartController {
   static index(req, res) {
     req.user
-      .getCart()
-      .then((cartItems) => successResponse(res, cartItems))
+      .populate("cart.items.productId")
+      .then((user) => successResponse(res, user.cart))
       .catch((exception) => failedResponse(res, exception));
   }
 
