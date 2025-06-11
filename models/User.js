@@ -48,4 +48,10 @@ schema.methods.deleteFromCart = function (product) {
   return this.save();
 };
 
+schema.methods.clearCart = function () {
+  this.cart = { items: [] };
+
+  return this.save();
+};
+
 export default mongoose.model("User", schema);
