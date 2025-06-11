@@ -3,7 +3,7 @@ import { successResponse, failedResponse } from "../utils.js";
 
 class productController {
   static async index(req, res) {
-    Product.fetchAll()
+    Product.find()
       .then((products) => successResponse(res, products))
       .catch((exception) =>
         failedResponse(res, exception, "Fail storing product")
@@ -19,16 +19,10 @@ class productController {
   static async store(req, res) {
     const { title, price, imageUrl, description } = req.body;
 
-    const product = new Product(
-      title,
-      price,
-      description,
-      imageUrl,
-      req.user._id
-    );
+    const product = new Product({ title, price, description, imageUrl });
 
     product
-      .store()
+      .save() // mongoose
       .then(() => successResponse(res, {}, "Success storing product"))
       .catch((exception) =>
         failedResponse(res, exception, "Fail storing product")
