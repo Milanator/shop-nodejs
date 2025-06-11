@@ -16,6 +16,7 @@ const schema = new Schema({
   description: {
     type: String,
   },
+  userId: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 export default mongoose.model("Product", schema);

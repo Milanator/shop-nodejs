@@ -4,6 +4,8 @@ import { successResponse, failedResponse } from "../utils.js";
 class productController {
   static async index(req, res) {
     Product.find()
+      .select("title imageUrl price")
+      .populate("userId", "name")
       .then((products) => successResponse(res, products))
       .catch((exception) =>
         failedResponse(res, exception, "Fail storing product")
@@ -19,7 +21,13 @@ class productController {
   static async store(req, res) {
     const { title, price, imageUrl, description } = req.body;
 
-    const product = new Product({ title, price, description, imageUrl });
+    const product = new Product({
+      title,
+      price,
+      description,
+      imageUrl,
+      userId: req.user,
+    });
 
     product
       .save() // mongoose
