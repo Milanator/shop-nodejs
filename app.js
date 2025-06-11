@@ -11,6 +11,7 @@ import User from "./models/User.js";
 // routes
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
+import orderRoutes from "./routes/order.js";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 // routes
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
+app.use("/api/v1/order", orderRoutes);
 
 const port = 4000;
 

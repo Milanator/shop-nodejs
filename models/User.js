@@ -7,7 +7,7 @@ export default class User {
   constructor(name, email, cart, id) {
     this.name = name;
     this.email = email;
-    this.cart = cart || { items: [] };
+    this.cart = cart || this.getEmptyCart();
     this.id = id;
   }
 
@@ -15,8 +15,12 @@ export default class User {
     return { _id: new ObjectId(id) };
   }
 
+  getEmptyCart() {
+    return { items: [] };
+  }
+
   compareProduct(cartItem, product) {
-    return cartItem.productId.toString() === product._id.toString();
+    return cartItem._id.toString() === product._id.toString();
   }
 
   save() {
@@ -34,7 +38,7 @@ export default class User {
     } else {
       // product isn in cart
       this.cart.items.push({
-        productId: new ObjectId(product._id),
+        ...product,
         quantity: 1,
       });
     }
@@ -45,17 +49,43 @@ export default class User {
   }
 
   deleteFromCart(product) {
-    this.cart.items = this.cart.items.filter(
+    const items = this.cart.items.filter(
       (i) => !this.compareProduct(i, product)
     );
 
     return getDb()
       .collection(COLLECTION)
-      .updateOne(User.#whereId(this.id), { $set: { cart: this.cart } });
+      .updateOne(User.#whereId(this.id), { $set: { cart: { items } } });
+  }
+
+  addOrder() {
+    return this.getCart()
+      .then((cart) => {
+        const order = {
+          ...this.cart,
+          userId: new ObjectId(this.id),
+        };
+
+        return getDb().collection("orders").insertOne(order);
+      })
+      .then(() => {
+        this.cart = this.getEmptyCart();
+
+        return getDb()
+          .collection(COLLECTION)
+          .updateOne(User.#whereId(this.id), { $set: { cart: this.cart } });
+      });
+  }
+
+  getOrders() {
+    return getDb()
+      .collection("orders")
+      .find({ userId: new ObjectId(this.id) })
+      .toArray();
   }
 
   getCart() {
-    const productIds = this.cart.items.map((i) => i.productId);
+    const productIds = this.cart.items.map((i) => i._id);
 
     return getDb()
       .collection("products")
