@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import { successResponse, failedResponse } from "../utils.js";
 
@@ -15,11 +16,23 @@ class authController {
   static login(req, res) {
     User.findOne({ email: req.body.email })
       .then((user) => {
-        req.session.authUser = user;
+        if (!user) {
+          throw new Error("Nesprávny email alebo heslo");
+        }
 
-        req.session.save(() => {
-          successResponse(res, user);
-        });
+        return bcrypt
+          .compare(req.body.password, user.password)
+          .then((doMatch) => {
+            if (!doMatch) {
+              throw new Error("Nesprávny email alebo heslo");
+            }
+
+            req.session.authUser = user;
+
+            return req.session.save(() => {
+              successResponse(res, user);
+            });
+          });
       })
       .catch((exception) => failedResponse(res, exception));
   }
@@ -29,6 +42,8 @@ class authController {
   }
 
   static register(req, res) {
+    const PASSWORD_LIMIT = 12;
+
     const { email, password, password_confirmation } = req.body;
 
     // not confirmed
@@ -43,14 +58,16 @@ class authController {
           return failedResponse(res, { message: "Používateľ už existuje." });
         }
 
-        // new registration
-        const newUser = new User({
-          email,
-          password,
-          cart: { items: [] },
-        });
+        return bcrypt.hash(password, PASSWORD_LIMIT).then((hashedPassword) => {
+          // new registration
+          const newUser = new User({
+            email,
+            password: hashedPassword,
+            cart: { items: [] },
+          });
 
-        newUser.save();
+          newUser.save();
+        });
       })
       .then((user) => successResponse(res, user))
       .catch((exception) => failedResponse(res, exception));
