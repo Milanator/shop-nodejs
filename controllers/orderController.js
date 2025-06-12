@@ -3,7 +3,6 @@ import { successResponse, failedResponse } from "../utils.js";
 
 class orderController {
   static index(req, res) {
-    console.log(req.session.isLoggedIn);
     Order.find({ "user.userId": req.user._id })
       .then((orders) => successResponse(res, orders))
       .catch((exception) => failedResponse(res, exception));
