@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
+import session from "express-session";
 
 // models
 import User from "./models/User.js";
@@ -16,19 +17,24 @@ import authRoutes from "./routes/auth.js";
 const app = express();
 
 // plugin
+const HASH_KEY = "my-secret";
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(session({ secret: HASH_KEY, resave: false, saveUninitialized: false }));
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 
 // register user to request
 const userId = "68497a6dcf35d45b85a9d448";
 
 app.use((req, res, next) => {
+  console.log(req.session.authUser);
+
   User.findById(userId)
     .then((user) => {
       req.user = user;
-      console.log(req.user);
+
       next();
     })
     .catch((exception) => console.log(exception));
