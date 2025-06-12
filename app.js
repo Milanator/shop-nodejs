@@ -41,7 +41,6 @@ app.use(cors({ credentials: true, origin: FRONTEND_ORIGIN }));
 
 // set auth user model instance to request
 app.use((req, res, next) => {
-  console.log(req.session.authUser);
   // logged out
   if (!req.session.authUser) {
     return next();
@@ -69,19 +68,6 @@ const port = 4000;
 // database
 mongoose
   .connect(MONGO_CONNECTION)
-  .then(() =>
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "milan",
-          email: "navratil.milann@gmail.com",
-          cart: { items: [] },
-        });
-
-        user.save();
-      }
-    })
-  )
   .then((result) => {
     app.listen(port);
   })
