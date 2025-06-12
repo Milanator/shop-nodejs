@@ -11,6 +11,7 @@ import User from "./models/User.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 
@@ -37,15 +38,16 @@ app.use((req, res, next) => {
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 const port = 4000;
 
 // database
-const connection =
+const CONNECTION =
   "mongodb+srv://navratilmilann:XwuSFq3KLQgRjQvs@nodejs-course.t5lqqq6.mongodb.net/?retryWrites=true&w=majority&appName=NodeJS-course";
 
 mongoose
-  .connect(connection)
+  .connect(CONNECTION)
   .then(() =>
     User.findOne().then((user) => {
       if (!user) {
