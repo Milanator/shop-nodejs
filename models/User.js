@@ -11,6 +11,12 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  resetToken: {
+    type: String,
+  },
+  resetTokenExpiration: {
+    type: String,
+  },
   cart: {
     items: [
       {

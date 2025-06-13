@@ -6,6 +6,13 @@ import mongoose from "mongoose";
 import session from "express-session";
 import ConnectMongodbSession from "connect-mongodb-session";
 
+import {
+  FRONTEND_ORIGIN,
+  MONGO_CONNECTION,
+  SERVER_PORT,
+  HASH_KEY,
+} from "./constants.js";
+
 // models
 import User from "./models/User.js";
 
@@ -14,9 +21,6 @@ import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
 import authRoutes from "./routes/auth.js";
-
-const MONGO_CONNECTION =
-  "mongodb+srv://navratilmilann:XwuSFq3KLQgRjQvs@nodejs-course.t5lqqq6.mongodb.net/?retryWrites=true&w=majority&appName=NodeJS-course";
 
 const app = express();
 
@@ -28,9 +32,6 @@ const store = new MongoDBStore({
 });
 
 // plugin
-const HASH_KEY = "my-secret";
-const FRONTEND_ORIGIN = "http://localhost:5173";
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
@@ -69,13 +70,11 @@ app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/auth", authRoutes);
 
-const port = 4000;
-
 // database
 mongoose
   .connect(MONGO_CONNECTION)
   .then((result) => {
-    app.listen(port);
+    app.listen(SERVER_PORT);
   })
   .catch((exception) => console.log(exception));
 

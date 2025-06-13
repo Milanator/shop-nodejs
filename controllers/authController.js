@@ -1,12 +1,14 @@
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import User from "../models/User.js";
 import { successResponse, failedResponse } from "../utils.js";
 import transporter from "./../plugins/nodemailer.js";
+import { FRONTEND_ORIGIN } from "../constants.js";
 
 class authController {
   static getAuthUser(req, res) {
     if (!req.session.authUser) {
-      successResponse(res, null);
+      return successResponse(res, null);
     }
 
     User.findById(req.session.authUser._id)
@@ -67,21 +69,58 @@ class authController {
             cart: { items: [] },
           });
 
+          newUser.save();
+
           // send email
-          transporter.sendMail({
+          return transporter.sendMail({
             from: '"Milan" <info@imperioom.sk>',
             to: "navratil.milann@gmail.com",
-            subject: "Hello ✔",
-            text: "Hello world?", // plain‑text body
-            html: "<b>Hello world?</b>", // HTML body
+            subject: "Registrácia",
+            html: "<b>Registrácia bola úspešná</b>",
           });
-
-          newUser.save();
         });
       })
-      .then((user) => successResponse(res, user))
+      .then(() => successResponse(res, {}))
       .catch((exception) => failedResponse(res, exception));
   }
+
+  static resetPasswordRequest(req, res) {
+    return crypto.randomBytes(32, (exception, buffer) => {
+      if (exception) {
+        console.log(exception);
+
+        return failedResponse(res, exception);
+      }
+
+      const token = buffer.toString("hex");
+
+      return User.findOne({ email: req.body.email })
+        .then((user) => {
+          if (!user) {
+            throw new Error("Používateľ s emailom neexistuje");
+          }
+
+          user.resetToken = token;
+          user.resetTokenExpiration = Date.now() + 3600000;
+
+          return user.save();
+        })
+        .then((user) => {
+          return transporter.sendMail({
+            from: '"Milan" <info@imperioom.sk>',
+            to: user.email,
+            subject: "Reset hesla",
+            html: `
+            Požiadal si o reset hesla. Po kliku na tento <a href="${FRONTEND_ORIGIN}/reset-password/new?token=${token}">link</a> vyplň formulár.
+            `,
+          });
+        })
+        .then(() => successResponse(res, {}))
+        .catch((exception) => failedResponse(res, exception));
+    });
+  }
+
+  static resetPasswordNew(req, res) {}
 }
 
 export default authController;
