@@ -58,33 +58,25 @@ class authController {
       return failedResponse(res, { message: validation.errors[0].msg });
     }
 
-    User.findOne({ email })
-      .then((user) => {
-        // user exist
-        if (user?._id) {
-          return failedResponse(res, { message: "Používateľ už existuje." });
-        }
+    return authController
+      .getHashedPassword(password)
+      .then((hashedPassword) => {
+        // new registration
+        const newUser = new User({
+          email,
+          password: hashedPassword,
+          cart: { items: [] },
+        });
 
-        return authController
-          .getHashedPassword(password)
-          .then((hashedPassword) => {
-            // new registration
-            const newUser = new User({
-              email,
-              password: hashedPassword,
-              cart: { items: [] },
-            });
+        newUser.save();
 
-            newUser.save();
-
-            // send email
-            return transporter.sendMail({
-              from: '"Milan" <info@imperioom.sk>',
-              to: "navratil.milann@gmail.com",
-              subject: "Registrácia",
-              html: "<b>Registrácia bola úspešná</b>",
-            });
-          });
+        // send email
+        return transporter.sendMail({
+          from: '"Milan" <info@imperioom.sk>',
+          to: "navratil.milann@gmail.com",
+          subject: "Registrácia",
+          html: "<b>Registrácia bola úspešná</b>",
+        });
       })
       .then(() => successResponse(res, {}))
       .catch((exception) => failedResponse(res, exception));
