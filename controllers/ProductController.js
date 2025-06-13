@@ -1,5 +1,6 @@
 import Product from "../models/product.js";
 import { successResponse, failedResponse } from "../utils.js";
+import { validationResult } from "express-validator";
 
 class productController {
   static async index(req, res) {
@@ -19,7 +20,14 @@ class productController {
   }
 
   static async store(req, res) {
+    const validation = validationResult(req);
+
     const { title, price, imageUrl, description } = req.body;
+
+    // validation error
+    if (!validation.isEmpty()) {
+      return failedResponse(res, { message: validation.errors[0].msg });
+    }
 
     const product = new Product({
       title,
@@ -38,7 +46,14 @@ class productController {
   }
 
   static async update(req, res) {
+    const validation = validationResult(req);
+
     const { title, imageUrl, description, price } = req.body;
+
+    // validation error
+    if (!validation.isEmpty()) {
+      return failedResponse(res, { message: validation.errors[0].msg });
+    }
 
     Product.findById(req.params.id)
       .then((product) => {

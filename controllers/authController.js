@@ -52,8 +52,9 @@ class authController {
   static register(req, res) {
     const validation = validationResult(req);
 
-    const { email, password, password_confirmation } = req.body;
+    const { email, password } = req.body;
 
+    // validation error
     if (!validation.isEmpty()) {
       return failedResponse(res, { message: validation.errors[0].msg });
     }
