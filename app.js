@@ -34,7 +34,13 @@ const FRONTEND_ORIGIN = "http://localhost:5173";
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
-  session({ secret: HASH_KEY, resave: false, saveUninitialized: false, store })
+  session({
+    secret: HASH_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { sameSite: "strict" },
+    store,
+  })
 );
 
 app.use(cors({ credentials: true, origin: FRONTEND_ORIGIN }));

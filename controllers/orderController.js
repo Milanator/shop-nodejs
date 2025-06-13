@@ -19,7 +19,7 @@ class orderController {
 
         const order = new Order({
           user: {
-            name: user.name,
+            email: req.user.email,
             userId: user,
           },
           products,
