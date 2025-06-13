@@ -6,3 +6,5 @@ export const MONGO_CONNECTION =
 export const SERVER_PORT = 4000;
 
 export const HASH_KEY = "my-secret";
+
+export const PASSWORD_LIMIT = 12;
