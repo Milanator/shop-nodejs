@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import { successResponse, failedResponse } from "../utils.js";
+import transporter from "./../plugins/nodemailer.js";
 
 class authController {
   static getAuthUser(req, res) {
@@ -64,6 +65,15 @@ class authController {
             email,
             password: hashedPassword,
             cart: { items: [] },
+          });
+
+          // send email
+          transporter.sendMail({
+            from: '"Milan" <info@imperioom.sk>',
+            to: "navratil.milann@gmail.com",
+            subject: "Hello ✔",
+            text: "Hello world?", // plain‑text body
+            html: "<b>Hello world?</b>", // HTML body
           });
 
           newUser.save();
