@@ -1,14 +1,14 @@
 import Order from "../models/order.js";
-import { successResponse, failedResponse } from "../utils.js";
+import { successResponse } from "../utils.js";
 
 class orderController {
-  static index(req, res) {
+  static index(req, res, next) {
     Order.find({ "user.userId": req.user._id })
       .then((orders) => successResponse(res, orders))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static store(req, res) {
+  static store(req, res, next) {
     req.user
       .populate("cart.items.productId")
       .then((user) => {
@@ -29,7 +29,7 @@ class orderController {
       })
       .then(() => req.user.clearCart())
       .then((result) => successResponse(res, {}))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 }
 

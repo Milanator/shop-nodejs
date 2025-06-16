@@ -2,26 +2,26 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import User from "./../models/User.js";
 import transporter from "./../plugins/nodemailer.js";
-import { successResponse, failedResponse } from "../utils.js";
+import { successResponse } from "../utils.js";
 import { FRONTEND_ORIGIN, PASSWORD_LIMIT } from "../constants.js";
 import { validationResult } from "express-validator";
 
 class authController {
-  static getAuthUser(req, res) {
+  static getAuthUser(req, res, next) {
     if (!req.session.authUser) {
       return successResponse(res, null);
     }
 
     User.findById(req.session.authUser._id)
       .then((user) => successResponse(res, user))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
   static getHashedPassword(password) {
     return bcrypt.hash(password, PASSWORD_LIMIT);
   }
 
-  static login(req, res) {
+  static login(req, res, next) {
     User.findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
@@ -42,21 +42,21 @@ class authController {
             });
           });
       })
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static logout(req, res) {
+  static logout(req, res, next) {
     req.session.destroy(() => successResponse(res, {}));
   }
 
-  static register(req, res) {
+  static register(req, res, next) {
     const validation = validationResult(req);
 
     const { email, password } = req.body;
 
-    // validation error
+    // validation error - go to general error
     if (!validation.isEmpty()) {
-      return failedResponse(res, { message: validation.errors[0].msg });
+      throw new Error(validation.errors[0].msg);
     }
 
     return authController
@@ -80,15 +80,13 @@ class authController {
         });
       })
       .then(() => successResponse(res, {}))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static resetPasswordRequest(req, res) {
+  static resetPasswordRequest(req, res, next) {
     return crypto.randomBytes(32, (exception, buffer) => {
       if (exception) {
-        console.log(exception);
-
-        return failedResponse(res, exception);
+        return next(new Error(exception));
       }
 
       const token = buffer.toString("hex");
@@ -115,11 +113,11 @@ class authController {
           });
         })
         .then(() => successResponse(res, {}))
-        .catch((exception) => failedResponse(res, exception));
+        .catch((exception) => next(new Error(exception)));
     });
   }
 
-  static resetPasswordNew(req, res) {
+  static resetPasswordNew(req, res, next) {
     User.findOne({
       resetToken: req.body.token,
       resetTokenExpiration: { $gt: Date.now() },
@@ -144,7 +142,7 @@ class authController {
           });
       })
       .then(() => successResponse(res, {}))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 }
 

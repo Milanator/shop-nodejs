@@ -1,26 +1,26 @@
 import Product from "./../models/product.js";
-import { successResponse, failedResponse } from "../utils.js";
+import { successResponse } from "../utils.js";
 
 class cartController {
-  static index(req, res) {
+  static index(req, res, next) {
     req.user
       .populate("cart.items.productId")
       .then((user) => successResponse(res, user.cart))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static store(req, res) {
+  static store(req, res, next) {
     Product.findById(req.body.product)
       .then((product) => req.user.addToCart(product))
       .then((result) => successResponse(res, {}))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static destroy(req, res) {
+  static destroy(req, res, next) {
     Product.findById(req.params.product)
       .then((product) => req.user.deleteFromCart(product))
       .then((result) => successResponse(res, {}))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 }
 

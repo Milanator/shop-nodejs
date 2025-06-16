@@ -21,6 +21,7 @@ import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
 import authRoutes from "./routes/auth.js";
+import { failedResponse } from "./utils.js";
 
 const app = express();
 
@@ -61,7 +62,7 @@ app.use((req, res, next) => {
 
       return next();
     })
-    .catch((exception) => console.log(exception));
+    .catch((exception) => next(new Error(exception)));
 });
 
 // routes
@@ -70,12 +71,17 @@ app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/auth", authRoutes);
 
+// general error handling
+app.use((err, req, res, next) => {
+  failedResponse(res, { message: err.message });
+});
+
 // database
 mongoose
   .connect(MONGO_CONNECTION)
   .then((result) => {
     app.listen(SERVER_PORT);
   })
-  .catch((exception) => console.log(exception));
+  .catch((exception) => next(new Error(exception)));
 
 export default app;

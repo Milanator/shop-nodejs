@@ -1,32 +1,30 @@
 import Product from "../models/product.js";
-import { successResponse, failedResponse } from "../utils.js";
+import { successResponse } from "../utils.js";
 import { validationResult } from "express-validator";
 
 class productController {
-  static async index(req, res) {
+  static async index(req, res, next) {
     Product.find()
       .select("title imageUrl price")
       .populate("userId", "name")
       .then((products) => successResponse(res, products))
-      .catch((exception) =>
-        failedResponse(res, exception, "Fail storing product")
-      );
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static async show(req, res) {
+  static async show(req, res, next) {
     Product.findById(req.params.id)
       .then((product) => successResponse(res, product))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static async store(req, res) {
+  static async store(req, res, next) {
     const validation = validationResult(req);
 
     const { title, price, imageUrl, description } = req.body;
 
-    // validation error
+    // validation error - go to general error
     if (!validation.isEmpty()) {
-      return failedResponse(res, { message: validation.errors[0].msg });
+      throw new Error(validation.errors[0].msg);
     }
 
     const product = new Product({
@@ -40,19 +38,17 @@ class productController {
     product
       .save() // mongoose
       .then(() => successResponse(res, {}, "Success storing product"))
-      .catch((exception) =>
-        failedResponse(res, exception, "Fail storing product")
-      );
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static async update(req, res) {
+  static async update(req, res, next) {
     const validation = validationResult(req);
 
     const { title, imageUrl, description, price } = req.body;
 
-    // validation error
+    // validation error - go to general error
     if (!validation.isEmpty()) {
-      return failedResponse(res, { message: validation.errors[0].msg });
+      throw new Error(validation.errors[0].msg);
     }
 
     Product.findById(req.params.id)
@@ -67,13 +63,13 @@ class productController {
       .then((result) =>
         successResponse(res, {}, "Successfully updated product")
       )
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 
-  static async destroy(req, res) {
+  static async destroy(req, res, next) {
     Product.findByIdAndDelete(req.params.id)
       .then(() => successResponse(res, {}, "Successfully deleted product"))
-      .catch((exception) => failedResponse(res, exception));
+      .catch((exception) => next(new Error(exception)));
   }
 }
 
