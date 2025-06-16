@@ -20,8 +20,10 @@ class productController {
   static async store(req, res, next) {
     const validation = validationResult(req);
 
-    const { title, price, imageUrl, description } = req.body;
+    const { title, price, description } = req.body;
 
+    const file = req.file;
+    console.log(req.file);
     // validation error - go to general error
     if (!validation.isEmpty()) {
       throw new Error(validation.errors[0].msg);
@@ -31,7 +33,6 @@ class productController {
       title,
       price,
       description,
-      imageUrl,
       userId: req.user,
     });
 

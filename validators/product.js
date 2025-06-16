@@ -7,7 +7,7 @@ export const storeRules = [
     .withMessage("Názov musí mať aspoň 3 znaky")
     .trim(),
 
-  body("imageUrl").isURL().withMessage("Obrázok URL je URL"),
+  // body("imageUrl").isURL().withMessage("Obrázok URL je URL"),
 
   body("price").isFloat().withMessage("Cena je číslo"),
 

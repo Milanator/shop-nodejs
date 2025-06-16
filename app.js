@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import session from "express-session";
 import ConnectMongodbSession from "connect-mongodb-session";
 
+import multer from "./plugins/multer.js";
+
 import {
   FRONTEND_ORIGIN,
   MONGO_CONNECTION,
@@ -35,6 +37,7 @@ const store = new MongoDBStore({
 // plugin
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(multer);
 app.use(
   session({
     secret: HASH_KEY,
