@@ -38,6 +38,8 @@ const store = new MongoDBStore({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(multer);
+app.use("/images", express.static("images"));
+app.use("/data", express.static("data"));
 app.use(
   session({
     secret: HASH_KEY,

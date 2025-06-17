@@ -24,3 +24,6 @@ export const isEmpty = (a) => {
 
   return false;
 };
+
+export const getStaticUrl = (req, relativePath) =>
+  `${req.protocol}://${req.get("host")}${relativePath}`;
