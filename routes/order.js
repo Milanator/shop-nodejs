@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get("/", orderController.index);
 router.post("/", orderController.store);
-router.get("/invoice/:id", orderController.downloadInvoice);
+router.get("/:id/invoice", orderController.downloadInvoice);
 
 export default router;

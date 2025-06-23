@@ -35,7 +35,8 @@ class orderController {
   }
 
   static downloadInvoice(req, res, next) {
-    const fileName = `${req.params.id}.pdf`;
+    const orderId = req.params.id;
+    const fileName = `${orderId}.pdf`;
     const invoicePath = path.join("data", "invoices", fileName);
 
     fs.readFile(invoicePath, (err, data) => {
