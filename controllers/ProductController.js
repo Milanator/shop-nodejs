@@ -1,5 +1,5 @@
 import Product from "../models/product.js";
-import { getStaticUrl, successResponse } from "../utils.js";
+import { deleteFile, getStaticUrl, successResponse } from "../utils.js";
 import { validationResult } from "express-validator";
 
 class productController {
@@ -64,7 +64,10 @@ class productController {
         product.description = description;
         product.price = price;
 
+        // updating image
         if (req.file.path) {
+          deleteFile(product.imageUrl);
+
           product.imageUrl = req.file.path;
         }
 
@@ -77,7 +80,18 @@ class productController {
   }
 
   static destroy(req, res, next) {
-    Product.findByIdAndDelete(req.params.id)
+    Product.findById(req.params.id)
+      .then((product) => {
+        if (!product) {
+          return next(new Error("Product not found"));
+        }
+
+        if (product.imageUrl) {
+          deleteFile(product.imageUrl);
+        }
+
+        return Product.deleteOne({ _id: req.params.id, userId: req.user._id });
+      })
       .then(() => successResponse(res, {}, "Successfully deleted product"))
       .catch((exception) => next(new Error(exception)));
   }

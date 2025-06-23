@@ -1,3 +1,5 @@
+import fs from "fs";
+
 export const successResponse = (res, data = {}, message = undefined) => {
   return res.status(200).json({
     data,
@@ -27,3 +29,11 @@ export const isEmpty = (a) => {
 
 export const getStaticUrl = (req, relativePath) =>
   `${req.protocol}://${req.get("host")}${relativePath}`;
+
+export const deleteFile = (path) => {
+  fs.unlink(path, (exception) => {
+    if (exception) {
+      throw new Error(exception);
+    }
+  });
+};

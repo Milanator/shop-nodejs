@@ -2,12 +2,9 @@ import { body } from "express-validator";
 
 export const storeRules = [
   body("title")
-    .isAlphanumeric()
     .isLength({ min: 3 })
     .withMessage("Názov musí mať aspoň 3 znaky")
     .trim(),
-
-  // body("imageUrl").isURL().withMessage("Obrázok URL je URL"),
 
   body("price").isFloat().withMessage("Cena je číslo"),
 

@@ -2,6 +2,7 @@ import Order from "../models/order.js";
 import fs from "fs";
 import path from "path";
 import { successResponse } from "../utils.js";
+import pdfKit from "pdfkit";
 
 class orderController {
   static index(req, res, next) {
@@ -39,19 +40,63 @@ class orderController {
     const fileName = `${orderId}.pdf`;
     const invoicePath = path.join("data", "invoices", fileName);
 
-    fs.readFile(invoicePath, (err, data) => {
-      if (err) {
-        return next(err);
-      }
+    Order.findById(orderId)
+      .then((order) => {
+        if (!order) {
+          return next(new Error("Order not found"));
+        }
 
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        'inline; filename="' + fileName + '"'
-      );
+        if (order.user.userId.toString() !== req.user._id.toString()) {
+          return next(new Error("Unauthorized"));
+        }
 
-      res.send(data);
-    });
+        // unoptimized download - can overflow RAM
+        // fs.readFile(invoicePath, (err, data) => {
+        //   if (err) {
+        //     return next(err);
+        //   }
+
+        //   res.setHeader("Content-Type", "application/pdf");
+        //   res.setHeader(
+        //     "Content-Disposition",
+        //     'inline; filename="' + fileName + '"'
+        //   );
+
+        //   res.send(data);
+        // });
+
+        // in stream - optimized version of downloading file
+        // const file = fs.createReadStream(invoicePath);
+
+        // res.setHeader("Content-Type", "application/pdf");
+        // res.setHeader(
+        //   "Content-Disposition",
+        //   'inline; filename="' + fileName + '"'
+        // );
+
+        // file.pipe(res);
+
+        // generate custom PDF
+        const pdfDocument = new pdfKit();
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+          "Content-Disposition",
+          'inline; filename="' + fileName + '"'
+        );
+
+        pdfDocument.pipe(fs.createWriteStream(invoicePath));
+        pdfDocument.pipe(res);
+
+        order.products.forEach((p) => {
+          pdfDocument.text(`
+            ${p.product.title} | ${p.quantity}ks | ${p.product.price}€
+          `);
+        });
+
+        pdfDocument.end();
+      })
+      .catch((exception) => next(exception));
   }
 }
 

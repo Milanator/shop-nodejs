@@ -1,10 +1,11 @@
 import express from "express";
 import orderController from "../controllers/orderController.js";
+import isAuth from "./../middlewares/is-auth.js";
 
 const router = express.Router();
 
 router.get("/", orderController.index);
 router.post("/", orderController.store);
-router.get("/:id/invoice", orderController.downloadInvoice);
+router.get("/:id/invoice", isAuth, orderController.downloadInvoice);
 
 export default router;
