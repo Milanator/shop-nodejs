@@ -1,5 +1,4 @@
 import fs from "fs";
-import { PER_PAGE } from "./constants.js";
 
 export const successResponse = (res, data = {}, message = undefined) => {
   return res.status(200).json({
@@ -28,8 +27,25 @@ export const isEmpty = (a) => {
   return false;
 };
 
+export const getCurrentUrl = (req) =>
+  `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+
 export const getStaticUrl = (req, relativePath) =>
   `${req.protocol}://${req.get("host")}${relativePath}`;
+
+export const getUpdatedUrlParam = (url, key, value) => {
+  url = new URL(url);
+
+  url.searchParams.set(key, value);
+
+  return url;
+};
+
+export const getUrlParam = (url, key) => {
+  url = new URL(url);
+
+  return new URLSearchParams(url.search).get(key);
+};
 
 export const deleteFile = (path) => {
   fs.unlink(path, (exception) => {
@@ -37,12 +53,4 @@ export const deleteFile = (path) => {
       throw new Error(exception);
     }
   });
-};
-
-export const getPaginationOffset = (req, perPage = 2) => {
-  return (req.query.page - 1) * perPage;
-};
-
-export const getPaginationPerPage = (req) => {
-  return req.query.page || PER_PAGE;
 };

@@ -1,19 +1,13 @@
 import Product from "../models/product.js";
-import {
-  deleteFile,
-  getPaginationOffset,
-  getPaginationPerPage,
-  getStaticUrl,
-  successResponse,
-} from "../utils.js";
+import { deleteFile, getStaticUrl, successResponse } from "../utils.js";
 import { validationResult } from "express-validator";
+import { getPagination, getPaginationParams } from "../utils/pagination.js";
 
 class productController {
   static index(req, res, next) {
     let count = undefined;
 
-    const perPage = getPaginationPerPage(req);
-    const offset = getPaginationOffset(req, perPage);
+    const { per_page, offset } = getPaginationParams(req);
 
     Product.countDocuments()
       .then((productCount) => {
@@ -21,7 +15,7 @@ class productController {
 
         return Product.find()
           .skip(offset)
-          .limit(perPage)
+          .limit(per_page)
           .select("title imageUrl price")
           .populate("userId", "name");
       })
@@ -31,10 +25,10 @@ class productController {
           imageUrl: getStaticUrl(req, `/${p.imageUrl}`),
         }));
 
-        return successResponse(res, {
-          products,
-          count,
-        });
+        return successResponse(
+          res,
+          getPagination(req, products, count, per_page)
+        );
       })
       .catch((exception) => next(new Error(exception)));
   }
