@@ -20,7 +20,7 @@ class cartController {
   static store(req, res, next) {
     Product.findById(req.body.product)
       .then((product) => req.user.addToCart(product))
-      .then((result) => successResponse(res, {}))
+      .then((result) => successResponse(res, req.user.cart))
       .catch((exception) => next(new Error(exception)));
   }
 

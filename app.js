@@ -14,6 +14,7 @@ import {
   SERVER_PORT,
   HASH_KEY,
 } from "./constants.js";
+import { failedResponse } from "./utils.js";
 
 // models
 import User from "./models/User.js";
@@ -22,8 +23,8 @@ import User from "./models/User.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
+import paymentRoutes from "./routes/payment.js";
 import authRoutes from "./routes/auth.js";
-import { failedResponse } from "./utils.js";
 
 const app = express();
 
@@ -74,6 +75,7 @@ app.use((req, res, next) => {
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/auth", authRoutes);
 
 // general error handling
