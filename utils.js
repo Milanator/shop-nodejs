@@ -1,4 +1,5 @@
 import fs from "fs";
+import { PER_PAGE } from "./constants.js";
 
 export const successResponse = (res, data = {}, message = undefined) => {
   return res.status(200).json({
@@ -36,4 +37,12 @@ export const deleteFile = (path) => {
       throw new Error(exception);
     }
   });
+};
+
+export const getPaginationOffset = (req, perPage = 2) => {
+  return (req.query.page - 1) * perPage;
+};
+
+export const getPaginationPerPage = (req) => {
+  return req.query.page || PER_PAGE;
 };

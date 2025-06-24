@@ -1,19 +1,40 @@
 import Product from "../models/product.js";
-import { deleteFile, getStaticUrl, successResponse } from "../utils.js";
+import {
+  deleteFile,
+  getPaginationOffset,
+  getPaginationPerPage,
+  getStaticUrl,
+  successResponse,
+} from "../utils.js";
 import { validationResult } from "express-validator";
 
 class productController {
   static index(req, res, next) {
-    Product.find()
-      .select("title imageUrl price")
-      .populate("userId", "name")
+    let count = undefined;
+
+    const perPage = getPaginationPerPage(req);
+    const offset = getPaginationOffset(req, perPage);
+
+    Product.countDocuments()
+      .then((productCount) => {
+        count = productCount;
+
+        return Product.find()
+          .skip(offset)
+          .limit(perPage)
+          .select("title imageUrl price")
+          .populate("userId", "name");
+      })
       .then((products) => {
         products = products.map((p) => ({
           ...p._doc,
           imageUrl: getStaticUrl(req, `/${p.imageUrl}`),
         }));
 
-        return successResponse(res, products);
+        return successResponse(res, {
+          products,
+          count,
+        });
       })
       .catch((exception) => next(new Error(exception)));
   }
