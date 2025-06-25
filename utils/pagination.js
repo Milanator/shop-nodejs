@@ -1,4 +1,8 @@
-import { getCurrentUrl, getUpdatedUrlParam, getUrlParam } from "./../utils.js";
+import {
+  getCurrentUrl,
+  getUpdatedUrlParam,
+  getUrlParam,
+} from "./../utils/url.js";
 import { PER_PAGE } from "./../constants.js";
 
 const getPrevPage = (currentUrl, currentPage) =>

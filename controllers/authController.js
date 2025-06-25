@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import User from "./../models/User.js";
 import transporter from "./../plugins/nodemailer.js";
-import { successResponse } from "../utils.js";
+import { successResponse } from "../utils/common.js";
 import { FRONTEND_ORIGIN, PASSWORD_LIMIT } from "../constants.js";
 import { validationResult } from "express-validator";
 

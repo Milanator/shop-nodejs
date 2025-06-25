@@ -1,4 +1,4 @@
-import { successResponse } from "../utils.js";
+import { successResponse } from "../utils/common.js";
 import Stripe from "stripe";
 import Order from "../models/order.js";
 

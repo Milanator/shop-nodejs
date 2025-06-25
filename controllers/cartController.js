@@ -1,5 +1,6 @@
 import Product from "./../models/product.js";
-import { getStaticUrl, successResponse } from "../utils.js";
+import { getStaticUrl } from "../utils/url.js";
+import { successResponse } from "../utils/common.js";
 
 class cartController {
   static index(req, res, next) {

@@ -1,5 +1,7 @@
 import Product from "../models/product.js";
-import { deleteFile, getStaticUrl, successResponse } from "../utils.js";
+import { getStaticUrl } from "./../utils/url.js";
+import { deleteFile } from "./../utils/file.js";
+import { successResponse } from "./../utils/common.js";
 import { validationResult } from "express-validator";
 import { getPagination, getPaginationParams } from "../utils/pagination.js";
 

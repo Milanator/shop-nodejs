@@ -14,7 +14,7 @@ import {
   SERVER_PORT,
   HASH_KEY,
 } from "./constants.js";
-import { failedResponse } from "./utils.js";
+import { failedResponse } from "./utils/common.js";
 
 // models
 import User from "./models/User.js";

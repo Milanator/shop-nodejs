@@ -1,4 +1,4 @@
-import { failedResponse } from "./../utils.js";
+import { failedResponse } from "../utils/common.js";
 
 export default (req, res, next) => {
   if (!req.session.authUser) {
